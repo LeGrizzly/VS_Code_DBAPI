@@ -1,0 +1,93 @@
+# DBAPI Explorer - VS Code Extension
+
+Browse and edit [FS25 DBAPI](https://github.com/LeGrizzly/FS25_DBAPI) database files directly from VS Code.
+
+## Features
+
+- **Sidebar TreeView** - Namespaces and key-value entries in the activity bar
+- **Auto-detect savegames** - Finds `DBAPI_data` directories in your FS25 savegames
+- **CRUD operations** - Add, edit, delete namespaces and entries
+- **JSON-aware editing** - Input `42` (number), `true` (boolean), `{"key": "value"}` (object), or plain strings
+- **Manual path** - Point to any `DBAPI_data` directory
+
+## Getting Started
+
+### Install
+
+```bash
+cd vscode-extension
+npm install
+npm run compile
+```
+
+### Run in Development
+
+1. Open `vscode-extension/` in VS Code
+2. Press `F5` to launch the Extension Development Host
+3. The "DBAPI Explorer" icon appears in the activity bar (left sidebar)
+
+### Connect to Data
+
+- Click the **search icon** in the DBAPI view title bar to auto-detect savegames
+- Or click the **folder icon** to manually browse to a `DBAPI_data` directory
+- Or set `DBAPI.dataPath` in VS Code settings
+
+## Usage
+
+### Sidebar Tree
+
+```
+DBAPI Explorer
+  FS25_MyMod          (namespace - click to expand)
+    highScore = 9001   (entry)
+    settings = {...}   (entry - JSON object)
+  FS25_OtherMod
+    ...
+```
+
+### Inline Actions
+
+| Context | Actions |
+|---------|---------|
+| Namespace | Add entry (+), Delete namespace (trash) |
+| Entry | Edit value (pencil), Delete entry (trash) |
+
+### Title Bar Actions
+
+| Icon | Action |
+|------|--------|
+| Search | Auto-detect savegames |
+| Folder | Set database path manually |
+| Refresh | Reload data from disk |
+| New folder | Create namespace |
+
+### Value Input
+
+When adding or editing values, the extension parses your input intelligently:
+
+| Input | Stored as |
+|-------|-----------|
+| `42` | number |
+| `3.14` | number |
+| `true` / `false` | boolean |
+| `"hello"` | string `hello` |
+| `hello` | string `hello` |
+| `{"a": 1}` | object |
+| `[1, 2, 3]` | array |
+
+## Configuration
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `DBAPI.dataPath` | `""` | Path to `DBAPI_data` directory. Leave empty for auto-detection. |
+
+## Architecture
+
+```
+src/
+  extension.ts           -- Entry point, command registration
+  DatabaseService.ts     -- File I/O, auto-detection, CRUD operations
+  DatabaseTreeProvider.ts -- VS Code TreeDataProvider implementation
+```
+
+The extension reads/writes the same JSON files that the FS25 DBAPI mod uses, so changes are immediately visible in-game after a reload.

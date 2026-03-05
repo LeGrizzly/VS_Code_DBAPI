@@ -1,0 +1,156 @@
+{
+  "name": "DBAPI-explorer",
+  "displayName": "DBAPI Explorer",
+  "description": "Browse and edit FS25 DBAPI database files directly from VS Code",
+  "version": "1.0.2",
+  "publisher": "LeGrizzly",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "engines": {
+    "vscode": "^1.109.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:lua"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "DBAPI-explorer",
+          "title": "DBAPI Explorer",
+          "icon": "resources/database.svg"
+        }
+      ]
+    },
+    "views": {
+      "DBAPI-explorer": [
+        {
+          "id": "DBAPIDatabaseView",
+          "name": "Database"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "DBAPI.setDataPath",
+        "title": "DBAPI: Set Database Path",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "DBAPI.autoDetect",
+        "title": "DBAPI: Auto-Detect Savegames",
+        "icon": "$(search)"
+      },
+      {
+        "command": "DBAPI.refresh",
+        "title": "DBAPI: Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "DBAPI.addEntry",
+        "title": "DBAPI: Add Entry",
+        "icon": "$(add)"
+      },
+      {
+        "command": "DBAPI.editEntry",
+        "title": "Edit Value",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "DBAPI.deleteEntry",
+        "title": "Delete Entry",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "DBAPI.addNamespace",
+        "title": "DBAPI: Add Namespace",
+        "icon": "$(new-folder)"
+      },
+      {
+        "command": "DBAPI.deleteNamespace",
+        "title": "Delete Namespace",
+        "icon": "$(trash)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "DBAPI.autoDetect",
+          "when": "view == DBAPIDatabaseView",
+          "group": "navigation@1"
+        },
+        {
+          "command": "DBAPI.setDataPath",
+          "when": "view == DBAPIDatabaseView",
+          "group": "navigation@2"
+        },
+        {
+          "command": "DBAPI.refresh",
+          "when": "view == DBAPIDatabaseView",
+          "group": "navigation@3"
+        },
+        {
+          "command": "DBAPI.addNamespace",
+          "when": "view == DBAPIDatabaseView",
+          "group": "navigation@4"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "DBAPI.addEntry",
+          "when": "view == DBAPIDatabaseView && viewItem == namespace",
+          "group": "inline@1"
+        },
+        {
+          "command": "DBAPI.deleteNamespace",
+          "when": "view == DBAPIDatabaseView && viewItem == namespace",
+          "group": "inline@2"
+        },
+        {
+          "command": "DBAPI.editEntry",
+          "when": "view == DBAPIDatabaseView && viewItem == entry",
+          "group": "inline@1"
+        },
+        {
+          "command": "DBAPI.deleteEntry",
+          "when": "view == DBAPIDatabaseView && viewItem == entry",
+          "group": "inline@2"
+        }
+      ]
+    },
+    "snippets": [
+      {
+        "language": "lua",
+        "path": "./snippets/DBAPI.code-snippets"
+      }
+    ],
+    "configuration": {
+      "title": "DBAPI Explorer",
+      "properties": {
+        "DBAPI.dataPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the DBAPI_data directory (e.g. C:/Users/.../savegame1/DBAPI_data). Leave empty for auto-detection."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "package": "vsce package",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.3",
+    "@types/vscode": "^1.109.0",
+    "@vscode/vsce": "^3.7.1",
+    "typescript": "^5.9.3"
+  }
+}

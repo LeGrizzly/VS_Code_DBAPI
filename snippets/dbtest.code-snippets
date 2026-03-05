@@ -1,0 +1,166 @@
+{
+    "DBAPI: Namespace constant": {
+        "prefix": "dbns",
+        "body": [
+            "local ${1:MY_NAMESPACE} = \"${2:FS25_MyMod}\""
+        ],
+        "description": "Declare a DBAPI namespace constant for your mod"
+    },
+    "DBAPI: Check availability": {
+        "prefix": "dbcheck",
+        "body": [
+            "if _G.DBAPI and DBAPI.isReady() then",
+            "\t$0",
+            "end"
+        ],
+        "description": "Guard clause to check if DBAPI API is available and ready"
+    },
+    "DBAPI: Initialize pattern": {
+        "prefix": "dbinit",
+        "body": [
+            "--- DBAPI integration for ${1:MyMod}",
+            "local DB_NAMESPACE = \"${2:FS25_$1}\"",
+            "",
+            "--- Checks if the DBAPI database is available.",
+            "--- @return boolean",
+            "local function isDBReady()",
+            "\treturn _G.DBAPI ~= nil and DBAPI.isReady()",
+            "end",
+            "",
+            "$0"
+        ],
+        "description": "Full DBAPI initialization pattern with namespace and helper"
+    },
+    "DBAPI: Set value": {
+        "prefix": "dbset",
+        "body": [
+            "local ok, err = DBAPI.setValue(${1:DB_NAMESPACE}, \"${2:key}\", ${3:value})",
+            "if not ok then",
+            "\tprint(\"${4:MyMod} Error: \" .. tostring(err))",
+            "end"
+        ],
+        "description": "Store a value in DBAPI with error handling"
+    },
+    "DBAPI: Get value": {
+        "prefix": "dbget",
+        "body": [
+            "local ${1:value}, err = DBAPI.getValue(${2:DB_NAMESPACE}, \"${3:key}\")",
+            "if err then",
+            "\tprint(\"${4:MyMod} Error: \" .. tostring(err))",
+            "end"
+        ],
+        "description": "Retrieve a value from DBAPI with error handling"
+    },
+    "DBAPI: Delete value": {
+        "prefix": "dbdelete",
+        "body": [
+            "local ok, err = DBAPI.deleteValue(${1:DB_NAMESPACE}, \"${2:key}\")",
+            "if not ok then",
+            "\tprint(\"${3:MyMod} Error: \" .. tostring(err))",
+            "end"
+        ],
+        "description": "Delete a key from DBAPI with error handling"
+    },
+    "DBAPI: List keys": {
+        "prefix": "dblist",
+        "body": [
+            "local keys, err = DBAPI.listKeys(${1:DB_NAMESPACE})",
+            "if err then",
+            "\tprint(\"${2:MyMod} Error: \" .. tostring(err))",
+            "elseif keys then",
+            "\tfor _, key in ipairs(keys) do",
+            "\t\tlocal val = DBAPI.getValue($1, key)",
+            "\t\t$0",
+            "\tend",
+            "end"
+        ],
+        "description": "List and iterate all keys in a DBAPI namespace"
+    },
+    "DBAPI: Load with default": {
+        "prefix": "dbload",
+        "body": [
+            "local ${1:value} = DBAPI.getValue(${2:DB_NAMESPACE}, \"${3:key}\")",
+            "if $1 == nil then",
+            "\t$1 = ${4:defaultValue}",
+            "end"
+        ],
+        "description": "Load a value from DBAPI with a fallback default"
+    },
+    "DBAPI: Save with log": {
+        "prefix": "dbsave",
+        "body": [
+            "local ok, err = DBAPI.setValue(${1:DB_NAMESPACE}, \"${2:key}\", ${3:value})",
+            "if ok then",
+            "\tprint(string.format(\"${4:MyMod}: Saved %s = %s\", \"$2\", tostring($3)))",
+            "else",
+            "\tprint(string.format(\"${4:MyMod} Error saving %s: %s\", \"$2\", tostring(err)))",
+            "end"
+        ],
+        "description": "Save a value to DBAPI with success/error logging"
+    },
+    "DBAPI: Full CRUD scaffold": {
+        "prefix": "dbcrud",
+        "body": [
+            "-- =============================================================================",
+            "-- ${1:MyMod} - DBAPI Integration",
+            "-- =============================================================================",
+            "",
+            "local DB_NAMESPACE = \"${2:FS25_$1}\"",
+            "",
+            "local ${1}DB = {}",
+            "",
+            "--- Checks if the database is available.",
+            "--- @return boolean",
+            "function ${1}DB.isReady()",
+            "\treturn _G.DBAPI ~= nil and DBAPI.isReady()",
+            "end",
+            "",
+            "--- Saves a value to the database.",
+            "--- @param key string",
+            "--- @param value any",
+            "--- @return boolean success",
+            "function ${1}DB.save(key, value)",
+            "\tif not ${1}DB.isReady() then return false end",
+            "\tlocal ok, err = DBAPI.setValue(DB_NAMESPACE, key, value)",
+            "\tif not ok then",
+            "\t\tprint(\"$1 DB Error: \" .. tostring(err))",
+            "\tend",
+            "\treturn ok",
+            "end",
+            "",
+            "--- Loads a value from the database.",
+            "--- @param key string",
+            "--- @param default any|nil Fallback value if key not found",
+            "--- @return any",
+            "function ${1}DB.load(key, default)",
+            "\tif not ${1}DB.isReady() then return default end",
+            "\tlocal value = DBAPI.getValue(DB_NAMESPACE, key)",
+            "\tif value == nil then return default end",
+            "\treturn value",
+            "end",
+            "",
+            "--- Removes a key from the database.",
+            "--- @param key string",
+            "--- @return boolean success",
+            "function ${1}DB.remove(key)",
+            "\tif not ${1}DB.isReady() then return false end",
+            "\tlocal ok, err = DBAPI.deleteValue(DB_NAMESPACE, key)",
+            "\tif not ok then",
+            "\t\tprint(\"$1 DB Error: \" .. tostring(err))",
+            "\tend",
+            "\treturn ok",
+            "end",
+            "",
+            "--- Lists all stored keys.",
+            "--- @return table keys",
+            "function ${1}DB.listAll()",
+            "\tif not ${1}DB.isReady() then return {} end",
+            "\tlocal keys = DBAPI.listKeys(DB_NAMESPACE)",
+            "\treturn keys or {}",
+            "end",
+            "",
+            "$0"
+        ],
+        "description": "Complete CRUD wrapper module for DBAPI integration"
+    }
+}
