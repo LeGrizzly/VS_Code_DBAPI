@@ -2,32 +2,42 @@ import * as vscode from "vscode";
 import { DatabaseService } from "./DatabaseService";
 
 /**
- * Tree item representing either a namespace or a key-value entry.
+ * Types of items shown in the tree view.
+ */
+export type ItemType = "namespace" | "entry" | "property";
+
+/**
+ * Tree item representing a namespace, a top-level key, or a nested property.
  */
 export class DatabaseTreeItem extends vscode.TreeItem {
     constructor(
         public readonly label: string,
-        public readonly itemType: "namespace" | "entry",
+        public readonly itemType: ItemType,
         public readonly namespace?: string,
-        public readonly key?: string,
+        public readonly keyPath?: string[], // Path to the value (e.g. ["myKey", "subKey"])
         public readonly value?: unknown
     ) {
         super(
             label,
-            itemType === "namespace"
+            itemType === "namespace" || (typeof value === "object" && value !== null)
                 ? vscode.TreeItemCollapsibleState.Collapsed
                 : vscode.TreeItemCollapsibleState.None
         );
 
-        this.contextValue = itemType;
-
+        const isObject = typeof value === "object" && value !== null;
+        
         if (itemType === "namespace") {
+            this.contextValue = "namespace";
             this.iconPath = new vscode.ThemeIcon("database");
             this.tooltip = `Namespace: ${label}`;
         } else {
-            this.iconPath = new vscode.ThemeIcon("symbol-field");
+            this.contextValue = isObject ? "object" : "leaf";
+            this.iconPath = isObject 
+                ? new vscode.ThemeIcon("symbol-class") 
+                : new vscode.ThemeIcon("symbol-field");
+            
             this.description = this.formatValue(value);
-            this.tooltip = `${key} = ${this.formatValue(value)}`;
+            this.tooltip = `${label} = ${this.formatValue(value)}`;
         }
     }
 
@@ -35,8 +45,11 @@ export class DatabaseTreeItem extends vscode.TreeItem {
         if (value === null || value === undefined) {
             return "null";
         }
+        if (Array.isArray(value)) {
+            return `Array(${value.length})`;
+        }
         if (typeof value === "object") {
-            return JSON.stringify(value);
+            return "{...}";
         }
         return String(value);
     }
@@ -44,7 +57,7 @@ export class DatabaseTreeItem extends vscode.TreeItem {
 
 /**
  * TreeDataProvider for the DBAPI database explorer.
- * Shows: Namespace > Key = Value
+ * Supports infinite nesting (Namespace > Key > SubKey > ...)
  */
 export class DatabaseTreeProvider
     implements vscode.TreeDataProvider<DatabaseTreeItem> {
@@ -68,20 +81,45 @@ export class DatabaseTreeProvider
             return [];
         }
 
-        // Root level: show namespaces
+        // 1. Root level: Show Namespaces
         if (!element) {
             return this.dbService.getNamespaces().map(
                 (ns) => new DatabaseTreeItem(ns, "namespace", ns)
             );
         }
 
-        // Namespace level: show key-value entries
+        // 2. Namespace level: Show top-level keys
         if (element.itemType === "namespace" && element.namespace) {
             const data = this.dbService.getNamespaceData(element.namespace);
             const keys = Object.keys(data).sort();
             return keys.map(
                 (key) =>
-                    new DatabaseTreeItem(key, "entry", element.namespace, key, data[key])
+                    new DatabaseTreeItem(
+                        key, 
+                        "entry", 
+                        element.namespace, 
+                        [key], 
+                        data[key]
+                    )
+            );
+        }
+
+        // 3. Nested level: Show properties of objects/tables
+        if (element.value && typeof element.value === "object" && element.namespace && element.keyPath) {
+            const obj = element.value as Record<string, unknown>;
+            const keys = Object.keys(obj).sort();
+            
+            return keys.map(
+                (key) => {
+                    const newPath = [...(element.keyPath || []), key];
+                    return new DatabaseTreeItem(
+                        key,
+                        "property",
+                        element.namespace,
+                        newPath,
+                        obj[key]
+                    );
+                }
             );
         }
 
