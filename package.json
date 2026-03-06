@@ -2,7 +2,7 @@
   "name": "DBAPI-explorer",
   "displayName": "DBAPI Explorer",
   "description": "Browse and edit FS25 DBAPI database files directly from VS Code",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "publisher": "LeGrizzly",
   "repository": {
     "type": "git",
