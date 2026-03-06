@@ -190,12 +190,12 @@ async function cmdDeleteNamespace(item: DatabaseTreeItem): Promise<void> {
 }
 
 async function cmdAddEntry(item: DatabaseTreeItem): Promise<void> {
-    if (!item || item.itemType !== "namespace" || !item.namespace) {
+    if (!item || !item.namespace) {
         return;
     }
 
     const key = await vscode.window.showInputBox({
-        prompt: `Key name for namespace '${item.namespace}'`,
+        prompt: `Key name to add under '${item.label}'`,
         placeHolder: "myKey",
         validateInput: (value) => {
             if (!value || value.trim() === "") {
@@ -219,17 +219,18 @@ async function cmdAddEntry(item: DatabaseTreeItem): Promise<void> {
     }
 
     const value = parseInputValue(rawValue);
+    const newPath = [...(item.keyPath || []), key];
 
-    if (dbService.setValue(item.namespace, key, value)) {
+    if (dbService.setValueAtPath(item.namespace, newPath, value)) {
         treeProvider.refresh();
         vscode.window.showInformationMessage(
-            `DBAPI: [${item.namespace}] ${key} = ${JSON.stringify(value)}`
+            `DBAPI: [${item.namespace}] Added ${newPath.join(".")} = ${JSON.stringify(value)}`
         );
     }
 }
 
 async function cmdEditEntry(item: DatabaseTreeItem): Promise<void> {
-    if (!item || item.itemType !== "entry" || !item.namespace || !item.key) {
+    if (!item || !item.namespace || !item.keyPath) {
         return;
     }
 
@@ -240,7 +241,7 @@ async function cmdEditEntry(item: DatabaseTreeItem): Promise<void> {
             : String(currentValue ?? "");
 
     const rawValue = await vscode.window.showInputBox({
-        prompt: `Edit value for '${item.key}'`,
+        prompt: `Edit value for '${item.keyPath.join(".")}'`,
         value: currentDisplay,
         placeHolder: '42, "hello", true, {"key": "value"}',
     });
@@ -251,18 +252,19 @@ async function cmdEditEntry(item: DatabaseTreeItem): Promise<void> {
 
     const value = parseInputValue(rawValue);
 
-    if (dbService.setValue(item.namespace, item.key, value)) {
+    if (dbService.setValueAtPath(item.namespace, item.keyPath, value)) {
         treeProvider.refresh();
     }
 }
 
 async function cmdDeleteEntry(item: DatabaseTreeItem): Promise<void> {
-    if (!item || item.itemType !== "entry" || !item.namespace || !item.key) {
+    if (!item || !item.namespace || !item.keyPath) {
         return;
     }
 
+    const pathString = item.keyPath.join(".");
     const confirm = await vscode.window.showWarningMessage(
-        `Delete key '${item.key}' from '${item.namespace}'?`,
+        `Delete key '${pathString}' from '${item.namespace}'?`,
         { modal: true },
         "Delete"
     );
@@ -271,10 +273,10 @@ async function cmdDeleteEntry(item: DatabaseTreeItem): Promise<void> {
         return;
     }
 
-    if (dbService.deleteKey(item.namespace, item.key)) {
+    if (dbService.deleteKeyAtPath(item.namespace, item.keyPath)) {
         treeProvider.refresh();
         vscode.window.showInformationMessage(
-            `DBAPI: [${item.namespace}] Deleted '${item.key}'`
+            `DBAPI: [${item.namespace}] Deleted '${pathString}'`
         );
     }
 }
