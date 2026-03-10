@@ -37,7 +37,7 @@ export interface OrmNamespaceInfo {
 }
 
 /**
- * DatabaseService reads and writes DBAPI XML files on disk.
+ * DatabaseService reads and writes SILODB XML files on disk.
  */
 export class DatabaseService {
     private dataPath: string | null = null;
@@ -304,7 +304,7 @@ export class DatabaseService {
                     if (!entry.startsWith("savegame")) {
                         continue;
                     }
-                    const dbPath = path.join(basePath, entry, "DBAPI_data");
+                    const dbPath = path.join(basePath, entry, "SILODB_data");
                     if (fs.existsSync(dbPath)) {
                         results.push(dbPath);
                     }

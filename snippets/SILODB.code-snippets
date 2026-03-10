@@ -1,34 +1,34 @@
 {
-    "DBAPI: Check availability": {
+    "SILODB: Check availability": {
         "prefix": "dbcheck",
         "body": [
-            "local DBAPI = g_globalMods[\"FS25_DBAPI\"]",
-            "if DBAPI and DBAPI.isReady() then",
+            "local SILODB = g_globalMods[\"FS25_SILODB\"]",
+            "if SILODB and SILODB.isReady() then",
             "\t$0",
             "end"
         ],
-        "description": "Guard clause to check if DBAPI API is available and ready"
+        "description": "Guard clause to check if SILODB API is available and ready"
     },
-    "DBAPI: Initialize pattern": {
+    "SILODB: Initialize pattern": {
         "prefix": "dbinit",
         "body": [
-            "--- DBAPI integration for ${1:MyMod}",
-            "local DBAPI = g_globalMods[\"FS25_DBAPI\"]",
-            "if not DBAPI or not DBAPI.isReady() then return end",
-            "local ${2:db} = DBAPI.bind(\"${3:FS25_$1}\")",
+            "--- SILODB integration for ${1:MyMod}",
+            "local SILODB = g_globalMods[\"FS25_SILODB\"]",
+            "if not SILODB or not SILODB.isReady() then return end",
+            "local ${2:db} = SILODB.bind(\"${3:FS25_$1}\")",
             "",
             "$0"
         ],
-        "description": "Full DBAPI initialization pattern with bind()"
+        "description": "Full SILODB initialization pattern with bind()"
     },
-    "DBAPI ORM: Bind namespace": {
+    "SILODB ORM: Bind namespace": {
         "prefix": "dbbind",
         "body": [
-            "local ${1:db} = DBAPI.bind(\"${2:FS25_MyMod}\")"
+            "local ${1:db} = SILODB.bind(\"${2:FS25_MyMod}\")"
         ],
         "description": "Create an ORM instance bound to a namespace"
     },
-    "DBAPI ORM: Define model": {
+    "SILODB ORM: Define model": {
         "prefix": "dbdefine",
         "body": [
             "local schema, err = ${1:db}:define(\"${2:Model}\", {",
@@ -44,7 +44,7 @@
         ],
         "description": "Define an ORM model with typed fields"
     },
-    "DBAPI ORM: Create record": {
+    "SILODB ORM: Create record": {
         "prefix": "dbcreateorm",
         "body": [
             "local record, err = ${1:db}:create(\"${2:Model}\", {",
@@ -57,7 +57,7 @@
         ],
         "description": "Create an ORM record with error handling"
     },
-    "DBAPI ORM: Find all": {
+    "SILODB ORM: Find all": {
         "prefix": "dbfindall",
         "body": [
             "local ${1:records}, err = ${2:db}:findAll(\"${3:Model}\", {",
@@ -73,7 +73,7 @@
         ],
         "description": "Find all ORM records matching a query and iterate"
     },
-    "DBAPI ORM: Find by ID": {
+    "SILODB ORM: Find by ID": {
         "prefix": "dbfindbyid",
         "body": [
             "local ${1:record}, err = ${2:db}:findById(\"${3:Model}\", ${4:id})",
@@ -85,7 +85,7 @@
         ],
         "description": "Find an ORM record by ID with guard"
     },
-    "DBAPI ORM: Update record": {
+    "SILODB ORM: Update record": {
         "prefix": "dbupdateorm",
         "body": [
             "local updated, err = ${1:db}:update(\"${2:Model}\", ${3:id}, {",
@@ -98,7 +98,7 @@
         ],
         "description": "Update an ORM record with error handling"
     },
-    "DBAPI ORM: Delete record": {
+    "SILODB ORM: Delete record": {
         "prefix": "dbremove",
         "body": [
             "local ok, err = ${1:db}:delete(\"${2:Model}\", ${3:id})",
@@ -108,7 +108,7 @@
         ],
         "description": "Delete an ORM record with error handling"
     },
-    "DBAPI ORM: Query with options": {
+    "SILODB ORM: Query with options": {
         "prefix": "dbquery",
         "body": [
             "local ${1:results}, err = ${2:db}:findAll(\"${3:Model}\", {",
@@ -124,15 +124,15 @@
         ],
         "description": "Complete ORM query with where, orderBy, and limit"
     },
-    "DBAPI ORM: Full CRUD module": {
+    "SILODB ORM: Full CRUD module": {
         "prefix": "dbormcrud",
         "body": [
             "-- =============================================================================",
-            "-- ${1:MyMod} - DBAPI ORM Integration",
+            "-- ${1:MyMod} - SILODB ORM Integration",
             "-- =============================================================================",
             "",
-            "local DBAPI = g_globalMods[\"FS25_DBAPI\"]",
-            "local db = DBAPI.bind(\"${2:FS25_$1}\")",
+            "local SILODB = g_globalMods[\"FS25_SILODB\"]",
+            "local db = SILODB.bind(\"${2:FS25_$1}\")",
             "",
             "--- Initialize ORM models.",
             "local function initModels()",
@@ -177,7 +177,7 @@
         ],
         "description": "Complete ORM CRUD module with init, create, find, update, delete"
     },
-    "DBAPI ORM: Field definition": {
+    "SILODB ORM: Field definition": {
         "prefix": "dbfield",
         "body": [
             "${1:fieldName} = { type = \"${2:string}\"${3:, required = ${4:true}}${5:, default = ${6:nil}} }"

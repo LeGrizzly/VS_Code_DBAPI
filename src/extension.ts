@@ -4,7 +4,7 @@ import {
     DatabaseTreeProvider,
     DatabaseTreeItem,
 } from "./DatabaseTreeProvider";
-import { DBAPICompletionProvider } from "./CompletionProvider";
+import { SILODBCompletionProvider } from "./CompletionProvider";
 
 let dbService: DatabaseService;
 let treeProvider: DatabaseTreeProvider;
@@ -14,7 +14,7 @@ export function activate(context: vscode.ExtensionContext): void {
     treeProvider = new DatabaseTreeProvider(dbService);
 
     // Register the tree view
-    const treeView = vscode.window.createTreeView("DBAPIDatabaseView", {
+    const treeView = vscode.window.createTreeView("SILODBDatabaseView", {
         treeDataProvider: treeProvider,
         showCollapseAll: true,
     });
@@ -26,7 +26,7 @@ export function activate(context: vscode.ExtensionContext): void {
     // Watch for config changes
     context.subscriptions.push(
         vscode.workspace.onDidChangeConfiguration((e) => {
-            if (e.affectsConfiguration("DBAPI.dataPath")) {
+            if (e.affectsConfiguration("SILODB.dataPath")) {
                 loadConfiguredPath();
             }
         })
@@ -34,26 +34,26 @@ export function activate(context: vscode.ExtensionContext): void {
 
     // Register commands
     context.subscriptions.push(
-        vscode.commands.registerCommand("DBAPI.setDataPath", cmdSetDataPath),
-        vscode.commands.registerCommand("DBAPI.autoDetect", cmdAutoDetect),
-        vscode.commands.registerCommand("DBAPI.refresh", cmdRefresh),
-        vscode.commands.registerCommand("DBAPI.addEntry", cmdAddEntry),
-        vscode.commands.registerCommand("DBAPI.editEntry", cmdEditEntry),
-        vscode.commands.registerCommand("DBAPI.deleteEntry", cmdDeleteEntry),
-        vscode.commands.registerCommand("DBAPI.addNamespace", cmdAddNamespace),
-        vscode.commands.registerCommand("DBAPI.deleteNamespace", cmdDeleteNamespace)
+        vscode.commands.registerCommand("SILODB.setDataPath", cmdSetDataPath),
+        vscode.commands.registerCommand("SILODB.autoDetect", cmdAutoDetect),
+        vscode.commands.registerCommand("SILODB.refresh", cmdRefresh),
+        vscode.commands.registerCommand("SILODB.addEntry", cmdAddEntry),
+        vscode.commands.registerCommand("SILODB.editEntry", cmdEditEntry),
+        vscode.commands.registerCommand("SILODB.deleteEntry", cmdDeleteEntry),
+        vscode.commands.registerCommand("SILODB.addNamespace", cmdAddNamespace),
+        vscode.commands.registerCommand("SILODB.deleteNamespace", cmdDeleteNamespace)
     );
 
-    // Register Lua IntelliSense for DBAPI API
+    // Register Lua IntelliSense for SILODB API
     context.subscriptions.push(
         vscode.languages.registerCompletionItemProvider(
             { language: "lua" },
-            new DBAPICompletionProvider(),
+            new SILODBCompletionProvider(),
             ".", ":"
         )
     );
 
-    vscode.window.showInformationMessage("DBAPI Explorer activated");
+    vscode.window.showInformationMessage("SILODB Explorer activated");
 }
 
 export function deactivate(): void {
@@ -65,7 +65,7 @@ export function deactivate(): void {
 // =============================================================================
 
 function loadConfiguredPath(): void {
-    const config = vscode.workspace.getConfiguration("DBAPI");
+    const config = vscode.workspace.getConfiguration("SILODB");
     const configPath = config.get<string>("dataPath", "");
 
     if (configPath) {
@@ -83,7 +83,7 @@ async function cmdSetDataPath(): Promise<void> {
         canSelectFolders: true,
         canSelectFiles: false,
         canSelectMany: false,
-        openLabel: "Select DBAPI_data folder",
+        openLabel: "Select SILODB_data folder",
     });
 
     if (!uris || uris.length === 0) {
@@ -94,11 +94,11 @@ async function cmdSetDataPath(): Promise<void> {
     dbService.setDataPath(selectedPath);
 
     // Save to workspace config
-    const config = vscode.workspace.getConfiguration("DBAPI");
+    const config = vscode.workspace.getConfiguration("SILODB");
     await config.update("dataPath", selectedPath, vscode.ConfigurationTarget.Workspace);
 
     treeProvider.refresh();
-    vscode.window.showInformationMessage(`DBAPI: Database path set to ${selectedPath}`);
+    vscode.window.showInformationMessage(`SILODB: Database path set to ${selectedPath}`);
 }
 
 async function cmdAutoDetect(): Promise<void> {
@@ -106,7 +106,7 @@ async function cmdAutoDetect(): Promise<void> {
 
     if (paths.length === 0) {
         vscode.window.showWarningMessage(
-            "DBAPI: No savegames with DBAPI_data found. Use the folder icon to set the path manually."
+            "SILODB: No savegames with SILODB_data found. Use the folder icon to set the path manually."
         );
         return;
     }
@@ -128,11 +128,11 @@ async function cmdAutoDetect(): Promise<void> {
 
     dbService.setDataPath(selected.path);
 
-    const config = vscode.workspace.getConfiguration("DBAPI");
+    const config = vscode.workspace.getConfiguration("SILODB");
     await config.update("dataPath", selected.path, vscode.ConfigurationTarget.Workspace);
 
     treeProvider.refresh();
-    vscode.window.showInformationMessage(`DBAPI: Connected to ${selected.label}`);
+    vscode.window.showInformationMessage(`SILODB: Connected to ${selected.label}`);
 }
 
 function cmdRefresh(): void {
@@ -160,9 +160,9 @@ async function cmdAddNamespace(): Promise<void> {
 
     if (dbService.createNamespace(name)) {
         treeProvider.refresh();
-        vscode.window.showInformationMessage(`DBAPI: Namespace '${name}' created`);
+        vscode.window.showInformationMessage(`SILODB: Namespace '${name}' created`);
     } else {
-        vscode.window.showErrorMessage(`DBAPI: Failed to create namespace '${name}'`);
+        vscode.window.showErrorMessage(`SILODB: Failed to create namespace '${name}'`);
     }
 }
 
@@ -184,7 +184,7 @@ async function cmdDeleteNamespace(item: DatabaseTreeItem): Promise<void> {
     if (dbService.deleteNamespace(item.namespace)) {
         treeProvider.refresh();
         vscode.window.showInformationMessage(
-            `DBAPI: Namespace '${item.namespace}' deleted`
+            `SILODB: Namespace '${item.namespace}' deleted`
         );
     }
 }
@@ -224,7 +224,7 @@ async function cmdAddEntry(item: DatabaseTreeItem): Promise<void> {
     if (dbService.setValueAtPath(item.namespace, newPath, value)) {
         treeProvider.refresh();
         vscode.window.showInformationMessage(
-            `DBAPI: [${item.namespace}] Added ${newPath.join(".")} = ${JSON.stringify(value)}`
+            `SILODB: [${item.namespace}] Added ${newPath.join(".")} = ${JSON.stringify(value)}`
         );
     }
 }
@@ -276,7 +276,7 @@ async function cmdDeleteEntry(item: DatabaseTreeItem): Promise<void> {
     if (dbService.deleteKeyAtPath(item.namespace, item.keyPath)) {
         treeProvider.refresh();
         vscode.window.showInformationMessage(
-            `DBAPI: [${item.namespace}] Deleted '${pathString}'`
+            `SILODB: [${item.namespace}] Deleted '${pathString}'`
         );
     }
 }

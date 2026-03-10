@@ -101,7 +101,7 @@ export class DatabaseTreeItem extends vscode.TreeItem {
 }
 
 /**
- * TreeDataProvider for the DBAPI database explorer.
+ * TreeDataProvider for the SILODB database explorer.
  * Supports infinite nesting (Namespace > Key > SubKey > ...)
  * and ORM models (Schema + Records).
  */

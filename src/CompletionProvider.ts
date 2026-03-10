@@ -8,7 +8,7 @@ interface MethodDef {
     snippet: string;
 }
 
-const DBAPI_METHODS: MethodDef[] = [
+const SILODB_METHODS: MethodDef[] = [
     {
         label: "isReady",
         description: "Vérifier si la DB est prête",
@@ -17,7 +17,7 @@ const DBAPI_METHODS: MethodDef[] = [
             "Vérifie si la base de données est initialisée et accessible.\n\n" +
             "**Exemple :**\n" +
             "```lua\n" +
-            "if self.DBAPI.isReady() then\n" +
+            "if self.SILODB.isReady() then\n" +
             '    print("Base de données opérationnelle")\n' +
             "end\n" +
             "```",
@@ -28,10 +28,10 @@ const DBAPI_METHODS: MethodDef[] = [
         description: "Version de l'API",
         detail: "() → string",
         doc:
-            "Retourne la version actuelle de DBAPI.\n\n" +
+            "Retourne la version actuelle de SILODB.\n\n" +
             "**Exemple :**\n" +
             "```lua\n" +
-            'print("Version : " .. self.DBAPI.getVersion())\n' +
+            'print("Version : " .. self.SILODB.getVersion())\n' +
             "```",
         snippet: "getVersion()",
     },
@@ -45,7 +45,7 @@ const DBAPI_METHODS: MethodDef[] = [
             "- `namespace` — Nom de votre mod (ex: `\"FS25_MyMod\"`)\n\n" +
             "**Exemple :**\n" +
             "```lua\n" +
-            'local db = DBAPI.bind("FS25_MyMod")\n' +
+            'local db = SILODB.bind("FS25_MyMod")\n' +
             'db:define("Player", { fields = { name = { type = "string" } } })\n' +
             "```",
         snippet: 'bind("${1:FS25_MyMod}")',
@@ -58,8 +58,8 @@ const DBAPI_METHODS: MethodDef[] = [
             "Retourne true si les fonctionnalités ORM sont disponibles.\n\n" +
             "**Exemple :**\n" +
             "```lua\n" +
-            "if DBAPI.hasORM() then\n" +
-            '    local db = DBAPI.bind("FS25_MyMod")\n' +
+            "if SILODB.hasORM() then\n" +
+            '    local db = SILODB.bind("FS25_MyMod")\n' +
             "end\n" +
             "```",
         snippet: "hasORM()",
@@ -171,7 +171,7 @@ const ORM_INSTANCE_METHODS: MethodDef[] = [
     },
 ];
 
-export class DBAPICompletionProvider implements vscode.CompletionItemProvider {
+export class SILODBCompletionProvider implements vscode.CompletionItemProvider {
     provideCompletionItems(
         document: vscode.TextDocument,
         position: vscode.Position
@@ -180,12 +180,12 @@ export class DBAPICompletionProvider implements vscode.CompletionItemProvider {
             .lineAt(position)
             .text.substring(0, position.character);
 
-        // Trigger on "DBAPI." — returns global DBAPI methods
-        if (linePrefix.match(/DBAPI\.$/)) {
-            return this.buildCompletions(DBAPI_METHODS);
+        // Trigger on "SILODB." — returns global SILODB methods
+        if (linePrefix.match(/SILODB\.$/)) {
+            return this.buildCompletions(SILODB_METHODS);
         }
 
-        // Trigger on "varName:" — check if varName is bound via DBAPI.bind()
+        // Trigger on "varName:" — check if varName is bound via SILODB.bind()
         const colonMatch = linePrefix.match(/(\w+):$/);
         if (colonMatch) {
             const varName = colonMatch[1];

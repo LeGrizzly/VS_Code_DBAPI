@@ -1,12 +1,12 @@
 {
-  "name": "DBAPI-explorer",
-  "displayName": "DBAPI Explorer",
-  "description": "Browse and edit FS25 DBAPI database files directly from VS Code",
+  "name": "SILODB-explorer",
+  "displayName": "SILODB Explorer",
+  "description": "Browse and edit FS25 SILODB database files directly from VS Code",
   "version": "2.0.2",
   "publisher": "LeGrizzly",
   "repository": {
     "type": "git",
-    "url": "https://github.com/LeGrizzly/VS_Code_DBAPI/tree/main"
+    "url": "https://github.com/LeGrizzly/VS_Code_SILODB/tree/main"
   },
   "engines": {
     "vscode": "^1.109.0"
@@ -22,58 +22,58 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "DBAPI-explorer",
-          "title": "DBAPI Explorer",
+          "id": "SILODB-explorer",
+          "title": "SILODB Explorer",
           "icon": "resources/database.svg"
         }
       ]
     },
     "views": {
-      "DBAPI-explorer": [
+      "SILODB-explorer": [
         {
-          "id": "DBAPIDatabaseView",
+          "id": "SILODBDatabaseView",
           "name": "Database"
         }
       ]
     },
     "commands": [
       {
-        "command": "DBAPI.setDataPath",
-        "title": "DBAPI: Set Database Path",
+        "command": "SILODB.setDataPath",
+        "title": "SILODB: Set Database Path",
         "icon": "$(folder-opened)"
       },
       {
-        "command": "DBAPI.autoDetect",
-        "title": "DBAPI: Auto-Detect Savegames",
+        "command": "SILODB.autoDetect",
+        "title": "SILODB: Auto-Detect Savegames",
         "icon": "$(search)"
       },
       {
-        "command": "DBAPI.refresh",
-        "title": "DBAPI: Refresh",
+        "command": "SILODB.refresh",
+        "title": "SILODB: Refresh",
         "icon": "$(refresh)"
       },
       {
-        "command": "DBAPI.addEntry",
+        "command": "SILODB.addEntry",
         "title": "Add Entry",
         "icon": "$(add)"
       },
       {
-        "command": "DBAPI.editEntry",
+        "command": "SILODB.editEntry",
         "title": "Edit Value",
         "icon": "$(edit)"
       },
       {
-        "command": "DBAPI.deleteEntry",
+        "command": "SILODB.deleteEntry",
         "title": "Delete Entry",
         "icon": "$(trash)"
       },
       {
-        "command": "DBAPI.addNamespace",
-        "title": "DBAPI: Add Namespace",
+        "command": "SILODB.addNamespace",
+        "title": "SILODB: Add Namespace",
         "icon": "$(new-folder)"
       },
       {
-        "command": "DBAPI.deleteNamespace",
+        "command": "SILODB.deleteNamespace",
         "title": "Delete Namespace",
         "icon": "$(trash)"
       }
@@ -81,60 +81,60 @@
     "menus": {
       "view/title": [
         {
-          "command": "DBAPI.autoDetect",
-          "when": "view == DBAPIDatabaseView",
+          "command": "SILODB.autoDetect",
+          "when": "view == SILODBDatabaseView",
           "group": "navigation@1"
         },
         {
-          "command": "DBAPI.setDataPath",
-          "when": "view == DBAPIDatabaseView",
+          "command": "SILODB.setDataPath",
+          "when": "view == SILODBDatabaseView",
           "group": "navigation@2"
         },
         {
-          "command": "DBAPI.refresh",
-          "when": "view == DBAPIDatabaseView",
+          "command": "SILODB.refresh",
+          "when": "view == SILODBDatabaseView",
           "group": "navigation@3"
         },
         {
-          "command": "DBAPI.addNamespace",
-          "when": "view == DBAPIDatabaseView",
+          "command": "SILODB.addNamespace",
+          "when": "view == SILODBDatabaseView",
           "group": "navigation@4"
         }
       ],
       "view/item/context": [
         {
-          "command": "DBAPI.addEntry",
-          "when": "view == DBAPIDatabaseView && viewItem == namespace",
+          "command": "SILODB.addEntry",
+          "when": "view == SILODBDatabaseView && viewItem == namespace",
           "group": "inline@1"
         },
         {
-          "command": "DBAPI.addEntry",
-          "when": "view == DBAPIDatabaseView && viewItem == object",
+          "command": "SILODB.addEntry",
+          "when": "view == SILODBDatabaseView && viewItem == object",
           "group": "inline@1"
         },
         {
-          "command": "DBAPI.editEntry",
-          "when": "view == DBAPIDatabaseView && viewItem == object",
+          "command": "SILODB.editEntry",
+          "when": "view == SILODBDatabaseView && viewItem == object",
           "group": "inline@2"
         },
         {
-          "command": "DBAPI.editEntry",
-          "when": "view == DBAPIDatabaseView && viewItem == leaf",
+          "command": "SILODB.editEntry",
+          "when": "view == SILODBDatabaseView && viewItem == leaf",
           "group": "inline@1"
         },
         {
-          "command": "DBAPI.deleteEntry",
-          "when": "view == DBAPIDatabaseView && viewItem == object",
+          "command": "SILODB.deleteEntry",
+          "when": "view == SILODBDatabaseView && viewItem == object",
           "group": "inline@3"
         },
         {
-          "command": "DBAPI.deleteEntry",
-          "when": "view == DBAPIDatabaseView && viewItem == leaf",
+          "command": "SILODB.deleteEntry",
+          "when": "view == SILODBDatabaseView && viewItem == leaf",
           "group": "inline@2"
         },
         {
-          "command": "DBAPI.deleteNamespace",
-          "when": "view == DBAPIDatabaseView && viewItem == namespace",
+          "command": "SILODB.deleteNamespace",
+          "when": "view == SILODBDatabaseView && viewItem == namespace",
           "group": "inline@2"
         }
       ]
@@ -142,16 +142,16 @@
     "snippets": [
       {
         "language": "lua",
-        "path": "./snippets/DBAPI.code-snippets"
+        "path": "./snippets/SILODB.code-snippets"
       }
     ],
     "configuration": {
-      "title": "DBAPI Explorer",
+      "title": "SILODB Explorer",
       "properties": {
-        "DBAPI.dataPath": {
+        "SILODB.dataPath": {
           "type": "string",
           "default": "",
-          "description": "Path to the DBAPI_data directory."
+          "description": "Path to the SILODB_data directory."
         }
       }
     }
