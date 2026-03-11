@@ -94,9 +94,11 @@ The extension reads/writes the same JSON files that the FS25 SILODB mod uses, so
 
 ---
 
-## Feedback
+## 🤝 Contributing
 
-Your feedback is invaluable as we cultivate this project. Please feel free to raise an issue on this repository to report bugs or suggest new features.
+Contributions, bug reports, and feature requests are welcome! If you want to help improve FS25_FleetManager, please feel free to:
+1. Open an issue to discuss proposed changes or report a bug.
+2. Fork the repository and submit a pull request.
 
 ---
 
